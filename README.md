@@ -1,39 +1,19 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# intl_ui
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+## 项目简介
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+`intl_ui` 是一个Flutter项目，旨在提供国际化用户界面支持。  
+项目的目标是通过 Dart 和 Flutter 框架构建高效、现代化的跨平台应用。
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+## 环境要求
 
-## Features
+- **Dart SDK**: >=3.7.0 <4.0.0
+- **Flutter SDK**: >=1.17.0
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+## 贡献
 
-## Getting started
+欢迎提交 Issue 或 Pull Request 来贡献代码。
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+## 许可证
 
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
-```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+此项目遵循 [MIT License](LICENSE)。
