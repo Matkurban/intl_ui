@@ -1,140 +1,239 @@
 import 'package:flutter/material.dart';
-import 'package:intl_ui/src/widgets/intl_row.dart';
 
-/// A custom AppBar widget with enhanced flexibility and layout options.
-/// 自定义的应用栏部件，提供增强的灵活性和布局选项。
-
-class IntlCustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const IntlCustomAppBar({
-    super.key,
-    required this.isLtr,
-    this.leading,
-    required this.title,
-    this.actions,
-    this.bottom,
-    this.toolbarHeight = 48,
-    this.centerTitle = true,
-    this.titleSpacing = 10,
-    this.leadingWidth = 48,
-    this.actionsWidth = 48,
-    this.backgroundColor,
-    this.titleBottomSpacing = 0,
-  });
-
-  /// Whether the layout is left-to-right (LTR).
-  /// 布局是否为从左到右（LTR）。
-  final bool isLtr;
-
-  /// The widget displayed on the leading side (e.g., back button).
-  /// 应用栏左侧显示的控件（例如返回按钮）。
+/// A customizable ListTile widget that supports RTL (Right-to-Left) layouts
+/// 一个支持从右到左布局的可自定义列表项组件
+class IntlListTile extends StatelessWidget {
+  /// Widget displayed at the leading (start) position
+  /// 列表项左侧（起始位置）的控件，通常是图标等
   final Widget? leading;
 
-  /// The widget displayed as the title in the center of the AppBar.
-  /// 应用栏中间显示的标题控件。
-  final Widget title;
+  /// Primary content of the list tile
+  /// 列表项的主要标题
+  final Widget? title;
 
-  /// The widget displayed on the trailing side, typically action buttons.
-  /// 应用栏右侧显示的控件，通常是操作按钮。
-  final Widget? actions;
+  /// Additional content below the title
+  /// 列表项的副标题
+  final Widget? subtitle;
 
-  /// The widget displayed at the bottom of the AppBar, such as a tab bar.
-  /// 应用栏底部显示的控件，例如选项卡。
-  final PreferredSizeWidget? bottom;
+  /// Widget displayed at the trailing (end) position
+  /// 列表项右侧（结束位置）的控件，通常是图标等
+  final Widget? trailing;
 
-  /// The height of the AppBar's toolbar section.
-  /// 应用栏工具栏部分的高度。
-  final double toolbarHeight;
+  /// Whether the list tile is displayed with three lines of text
+  /// 是否显示为三行样式，默认为 false
+  final bool isThreeLine;
 
-  /// Whether to center the title. Defaults to true.
-  /// 标题是否居中显示。默认值为 true。
-  final bool centerTitle;
+  /// Whether the list tile is part of a dense list
+  /// 是否紧凑显示，影响列表项的垂直间距
+  final bool? dense;
 
-  /// The spacing between the title and other elements.
-  /// 标题与其他元素之间的间距。
-  final double titleSpacing;
+  /// Defines how compact the list tile's layout will be
+  /// 视觉密度，用于调整列表项的布局紧凑程度
+  final VisualDensity? visualDensity;
 
-  /// The width of the leading widget.
-  /// 左侧控件的宽度。
-  final double leadingWidth;
+  /// The shape of the list tile's outline
+  /// 列表项的形状边界，例如圆角矩形等
+  final ShapeBorder? shape;
 
-  /// The width of the trailing widget (actions).
-  /// 右侧控件（操作按钮）的宽度。
-  final double actionsWidth;
+  /// The list tile's style
+  /// 列表项的文本样式
+  final ListTileStyle? style;
 
-  /// The background color of the AppBar.
-  /// 应用栏的背景颜色。
-  final Color? backgroundColor;
+  /// The color for selected items
+  /// 选中状态下的颜色
+  final Color? selectedColor;
 
-  /// The spacing between the title and the bottom widget.
-  /// 标题与底部控件之间的间距。
-  final double titleBottomSpacing;
+  /// The color for icons
+  /// 图标颜色
+  final Color? iconColor;
+
+  /// The color for text
+  /// 文本颜色
+  final Color? textColor;
+
+  /// Text style for the title
+  /// 标题的文本样式
+  final TextStyle? titleTextStyle;
+
+  /// Text style for the subtitle
+  /// 副标题的文本样式
+  final TextStyle? subtitleTextStyle;
+
+  /// Text style for leading and trailing widgets
+  /// 左侧和右侧控件中文字的文本样式
+  final TextStyle? leadingAndTrailingTextStyle;
+
+  /// The padding around the content
+  /// 列表项内容的内边距
+  final EdgeInsetsGeometry? contentPadding;
+
+  /// Whether the list tile is interactive
+  /// 列表项是否可用，默认为 true
+  final bool enabled;
+
+  /// Callback when the list tile is tapped
+  /// 点击列表项时的回调函数
+  final VoidCallback? onTap;
+
+  /// Callback when the list tile is long-pressed
+  /// 长按列表项时的回调函数
+  final VoidCallback? onLongPress;
+
+  /// Callback when the focus changes
+  /// 焦点变化时的回调函数
+  final ValueChanged<bool>? onFocusChange;
+
+  /// The cursor for mouse hover
+  /// 鼠标悬停时的光标样式
+  final MouseCursor? mouseCursor;
+
+  /// Whether this list tile is selected
+  /// 列表项是否处于选中状态，默认为 false
+  final bool selected;
+
+  /// The color when the list tile has input focus
+  /// 获得焦点时的颜色
+  final Color? focusColor;
+
+  /// The color when the mouse hovers over the list tile
+  /// 鼠标悬停时的颜色
+  final Color? hoverColor;
+
+  /// The color of the splash effect when tapped
+  /// 点击时的水波纹颜色
+  final Color? splashColor;
+
+  /// An optional focus node to control focus behavior
+  /// 焦点节点，用于控制焦点相关的行为
+  final FocusNode? focusNode;
+
+  /// Whether to automatically request focus
+  /// 是否自动获取焦点，默认为 false
+  final bool autofocus;
+
+  /// The background color of the list tile
+  /// 列表项的背景颜色
+  final Color? tileColor;
+
+  /// The background color when selected
+  /// 选中状态下列表项的背景颜色
+  final Color? selectedTileColor;
+
+  /// Whether to enable feedback effects
+  /// 是否启用反馈，例如点击时的震动反馈
+  final bool? enableFeedback;
+
+  /// The horizontal gap between the titles and the leading/trailing widgets
+  /// 标题与左侧和右侧控件之间的水平间距
+  final double? horizontalTitleGap;
+
+  /// The minimum padding on the top and bottom
+  /// 最小垂直内边距
+  final double? minVerticalPadding;
+
+  /// The minimum width allocated for the leading widget
+  /// 左侧控件的最小宽度
+  final double? minLeadingWidth;
+
+  /// The minimum height of the list tile
+  /// 列表项的最小高度
+  final double? minTileHeight;
+
+  /// The alignment of the title within the list tile
+  /// 标题的对齐方式
+  final ListTileTitleAlignment? titleAlignment;
+
+  /// Whether to add semantic for tap actions
+  /// 是否为点击操作添加语义信息，默认为 true
+  final bool internalAddSemanticForOnTap;
+
+  /// Whether the layout direction is left-to-right
+  /// 是否为从左到右布局，默认为 true
+  final bool isLtr;
+
+  /// Creates an IntlListTile
+  /// 创建一个国际化列表项
+  const IntlListTile({
+    super.key,
+    this.leading,
+    this.title,
+    this.subtitle,
+    this.trailing,
+    this.isThreeLine = false,
+    this.dense,
+    this.visualDensity,
+    this.shape,
+    this.style,
+    this.selectedColor,
+    this.iconColor,
+    this.textColor,
+    this.titleTextStyle,
+    this.subtitleTextStyle,
+    this.leadingAndTrailingTextStyle,
+    this.contentPadding,
+    this.enabled = true,
+    this.onTap,
+    this.onLongPress,
+    this.onFocusChange,
+    this.mouseCursor,
+    this.selected = false,
+    this.focusColor,
+    this.hoverColor,
+    this.splashColor,
+    this.focusNode,
+    this.autofocus = false,
+    this.tileColor,
+    this.selectedTileColor,
+    this.enableFeedback,
+    this.horizontalTitleGap,
+    this.minVerticalPadding,
+    this.minLeadingWidth,
+    this.minTileHeight,
+    this.titleAlignment,
+    this.internalAddSemanticForOnTap = true,
+    this.isLtr = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Get the screen size and padding from MediaQuery.
-    // 从 MediaQuery 获取屏幕大小和边距信息。
-    var queryData = MediaQuery.of(context);
-    var size = queryData.size;
-
-    return ColoredBox(
-      // Set the background color, defaulting to the AppBar theme's color.
-      // 设置背景颜色，默认使用主题的 AppBar 颜色。
-      color: backgroundColor ?? Theme.of(context).appBarTheme.backgroundColor!,
-      child: Column(
-        // Set spacing between the title and the bottom widget.
-        // 设置标题与底部控件之间的间距。
-        spacing: titleBottomSpacing,
-        // Minimize the column's size to fit its content.
-        // 将列的大小缩小以适应其内容。
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IntlRow(
-            // Configure the layout for the AppBar's toolbar section.
-            // 配置应用栏工具栏部分的布局。
-            isLtr: isLtr,
-            width: size.width,
-            height: toolbarHeight,
-            margin: EdgeInsets.only(top: queryData.padding.top),
-            spacing: titleSpacing,
-            alignment: centerTitle ? Alignment.center : Alignment.centerLeft,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Add the leading widget with size constraints.
-              // 添加左侧控件并设置大小约束。
-              Container(
-                constraints: BoxConstraints(
-                  maxWidth: leadingWidth,
-                  minWidth: leadingWidth,
-                ),
-                child: leading ?? SizedBox(),
-              ),
-              // Add the title widget.
-              // 添加标题控件。
-              title,
-              // Add the action widget with size constraints.
-              // 添加右侧操作控件并设置大小约束。
-              Container(
-                constraints: BoxConstraints(
-                  minWidth: actionsWidth,
-                  maxWidth: actionsWidth,
-                ),
-                child: actions,
-              ),
-            ],
-          ),
-          // Add the bottom widget, if any.
-          // 添加底部控件（如果有）。
-          SizedBox(width: size.width, child: bottom),
-        ],
-      ),
+    // This builds a custom list tile based on the provided parameters
+    // 这里根据传入的参数构建自定义的列表项
+    return ListTile(
+      leading: isLtr ? leading : trailing,
+      title: title,
+      subtitle: subtitle,
+      trailing: isLtr ? trailing : leading,
+      isThreeLine: isThreeLine,
+      dense: dense,
+      visualDensity: visualDensity,
+      shape: shape,
+      style: style,
+      selectedColor: selectedColor,
+      iconColor: iconColor,
+      textColor: textColor,
+      titleTextStyle: titleTextStyle,
+      subtitleTextStyle: subtitleTextStyle,
+      leadingAndTrailingTextStyle: leadingAndTrailingTextStyle,
+      contentPadding: contentPadding,
+      enabled: enabled,
+      onTap: onTap,
+      onLongPress: onLongPress,
+      onFocusChange: onFocusChange,
+      mouseCursor: mouseCursor,
+      selected: selected,
+      focusColor: focusColor,
+      hoverColor: hoverColor,
+      splashColor: splashColor,
+      focusNode: focusNode,
+      autofocus: autofocus,
+      tileColor: tileColor,
+      selectedTileColor: selectedTileColor,
+      enableFeedback: enableFeedback,
+      horizontalTitleGap: horizontalTitleGap,
+      minVerticalPadding: minVerticalPadding,
+      minLeadingWidth: minLeadingWidth,
+      minTileHeight: minTileHeight,
+      titleAlignment: titleAlignment,
     );
-  }
-
-  @override
-  Size get preferredSize {
-    // Calculate the total height of the AppBar, including the toolbar and bottom widget.
-    // 计算应用栏的总高度，包括工具栏和底部控件。
-    var height = (toolbarHeight) + (bottom?.preferredSize.height ?? 0);
-    return Size.fromHeight(height);
   }
 }
