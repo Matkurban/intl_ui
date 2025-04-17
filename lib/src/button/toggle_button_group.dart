@@ -13,7 +13,7 @@ class ToggleButtonGroup extends StatefulWidget {
 
   /// Callback function when a button is selected
   /// 按钮被选中时的回调函数
-  final Function(int) onSelected;
+  final Function(int index) onSelected;
 
   /// Background color of the selected button
   /// 选中按钮的背景颜色
@@ -55,13 +55,18 @@ class ToggleButtonGroup extends StatefulWidget {
   /// 滚动动画的曲线
   final Curve animationCurve;
 
+  final AlignmentGeometry labelAlignment;
+
+  @override
+  State createState() => _ToggleButtonGroupState();
+
   const ToggleButtonGroup({
     super.key,
     required this.labels,
-    required this.selectedIndex,
     required this.onSelected,
+    this.selectedIndex = 0,
     this.selectedColor = Colors.blue,
-    this.unselectedColor = Colors.grey,
+    this.unselectedColor = Colors.black12,
     this.selectedTextStyle = const TextStyle(color: Colors.white),
     this.unselectedTextStyle = const TextStyle(color: Colors.black),
     this.buttonPadding = const EdgeInsets.symmetric(
@@ -76,10 +81,8 @@ class ToggleButtonGroup extends StatefulWidget {
     ),
     this.animationDuration = const Duration(milliseconds: 300),
     this.animationCurve = Curves.easeInOut,
+    this.labelAlignment = Alignment.center,
   });
-
-  @override
-  State createState() => _ToggleButtonGroupState();
 }
 
 class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
@@ -143,7 +146,7 @@ class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
           return Container(
             key: _itemKeys[index],
             margin: widget.buttonMargin,
-            child: GestureDetector(
+            child: InkWell(
               onTap: () {
                 setState(() {
                   _currentIndex = index;
@@ -153,6 +156,7 @@ class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
               },
               child: Container(
                 padding: widget.buttonPadding,
+                alignment: widget.labelAlignment,
                 decoration: BoxDecoration(
                   color:
                       isSelected

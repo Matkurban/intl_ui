@@ -11,7 +11,6 @@ class RadiusImage extends StatelessWidget {
     this.radius = 10,
     required this.width,
     required this.height,
-    this.shape = BoxShape.rectangle,
     this.fit = BoxFit.fill,
     this.borderWidth = 0,
     this.borderColor,
@@ -34,10 +33,6 @@ class RadiusImage extends StatelessWidget {
   /// Height of the image container
   /// 图片容器的高度
   final double height;
-
-  /// Shape of the image (rectangle or circle)
-  /// 图片的形状（矩形或圆形）
-  final BoxShape shape;
 
   /// How the image should be inscribed into the container
   /// 图片在容器中的填充方式
@@ -65,11 +60,8 @@ class RadiusImage extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        shape: shape,
-        borderRadius:
-            shape == BoxShape.rectangle && radius != 0
-                ? BorderRadius.circular(radius)
-                : null,
+        shape: BoxShape.rectangle,
+        borderRadius: radius != 0 ? BorderRadius.circular(radius) : null,
         image: DecorationImage(image: image, fit: fit),
         border:
             borderWidth > 0

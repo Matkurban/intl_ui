@@ -10,7 +10,7 @@ class IntlBackButton extends StatelessWidget {
     this.isLtr = true,
     this.leftIcon = Icons.keyboard_arrow_left,
     this.rightIcon = Icons.keyboard_arrow_right,
-    this.iconSize = 26,
+    this.iconSize,
     this.onPressed,
   });
 
@@ -32,7 +32,7 @@ class IntlBackButton extends StatelessWidget {
 
   /// The size of the button icon. Defaults to 26.
   /// 按钮图标的大小。默认为 26。
-  final double iconSize;
+  final double? iconSize;
 
   /// The callback function executed when the button is pressed.
   /// Defaults to popping the current navigation stack.
@@ -54,7 +54,7 @@ class IntlBackButton extends StatelessWidget {
         color: color ?? Theme.of(context).appBarTheme.foregroundColor,
         // Set the size of the icon.
         // 设置图标的大小。
-        size: iconSize,
+        size: iconSize ?? IconThemeData().size,
       ),
     );
   }

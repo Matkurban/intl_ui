@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl_ui/src/widgets/intl_back_button.dart';
 
 /// A customizable AppBar widget with support for various configurations.
 /// 可配置的自定义应用栏部件，支持多种设置。
@@ -8,7 +7,7 @@ import 'package:intl_ui/src/widgets/intl_back_button.dart';
 class IntlAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// The widget displayed on the left side, usually a back arrow or similar.
   /// 左侧显示的控件，通常是返回箭头或类似控件。
-  final Widget leading;
+  final Widget? leading;
 
   /// Whether to automatically infer and display the leading widget (e.g., back arrow) based on navigation context.
   /// 是否自动推断并显示左侧控件（如返回箭头），基于导航上下文。
@@ -20,7 +19,7 @@ class IntlAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// The widgets displayed on the right side of the AppBar, typically action buttons.
   /// 应用栏右侧显示的控件，通常是操作按钮。
-  final Widget actions;
+  final List<Widget>? actions;
 
   /// A flexible area below the AppBar, often used for parallax effects or similar layouts.
   /// 应用栏下方的灵活区域，通常用于实现视差效果或类似布局。
@@ -126,12 +125,14 @@ class IntlAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// 是否是从左到右布局，默认为true。
   final bool isLtr;
 
+  final double actionWidgetWidth = 48.0;
+
   const IntlAppBar({
     super.key,
-    this.leading = const IntlBackButton(),
+    this.leading,
     this.automaticallyImplyLeading = true,
     this.title,
-    this.actions = const SizedBox(),
+    this.actions = const <Widget>[],
     this.flexibleSpace,
     this.bottom,
     this.elevation,
@@ -162,12 +163,40 @@ class IntlAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    var widget = isLtr ? actions : leading;
+    final List<Widget> actionsList = actions ?? [];
+
+    // 计算 actions 的总宽度
+    double getActionsWidth() {
+      double totalWidth = 0;
+      // 默认每个 action 按钮宽度为 48（Material Design 标准）
+      totalWidth = actionWidgetWidth * actionsList.length;
+      return totalWidth;
+    }
+
+    Widget? leadingWidget;
+    List<Widget>? actionsWidget;
+    double? computedLeadingWidth;
+
+    if (isLtr) {
+      leadingWidget = leading;
+      actionsWidget = actionsList.isNotEmpty ? actionsList : null;
+      computedLeadingWidth = leadingWidth;
+    } else {
+      leadingWidget =
+          actionsList.isNotEmpty
+              ? Row(mainAxisSize: MainAxisSize.min, children: actionsList)
+              : null;
+      actionsWidget = leading != null ? <Widget>[leading!] : null;
+      // 当方向为 RTL 时，使用计算后的 actions 宽度
+      computedLeadingWidth =
+          actionsList.isNotEmpty ? getActionsWidth() : leadingWidth;
+    }
+
     return AppBar(
-      leading: isLtr ? leading : actions,
+      leading: leadingWidget,
       automaticallyImplyLeading: automaticallyImplyLeading,
       title: title,
-      actions: [widget],
+      actions: actionsWidget,
       flexibleSpace: flexibleSpace,
       bottom: bottom,
       elevation: elevation,
@@ -187,7 +216,7 @@ class IntlAppBar extends StatelessWidget implements PreferredSizeWidget {
       toolbarOpacity: toolbarOpacity,
       bottomOpacity: bottomOpacity,
       toolbarHeight: toolbarHeight,
-      leadingWidth: leadingWidth,
+      leadingWidth: computedLeadingWidth,
       toolbarTextStyle: toolbarTextStyle,
       titleTextStyle: titleTextStyle,
       systemOverlayStyle: systemOverlayStyle,
