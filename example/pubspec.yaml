@@ -1,6 +1,7 @@
 name: example
 description: "A Flutter UI package that provides internationalized widgets and components for building multilingual applications."
 version: 0.0.1
+publish_to: "none"
 
 environment:
   sdk: ^3.7.2
