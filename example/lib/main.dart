@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:example/custom/title_child_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_ui/intl_ui.dart';
@@ -42,6 +44,25 @@ class _MyHomePageState extends State<MyHomePage> {
       isLtr = !isLtr;
     });
   }
+
+  final String jsonString = '''
+  {
+    "name": "John",
+    "age": 30,
+    "city": "New York",
+    "isMarried": false,
+    "children": [
+      {
+        "name": "Anna",
+        "age": 10
+      },
+      {
+        "name": "Billy",
+        "age": 5
+      }
+    ]
+  }
+  ''';
 
   @override
   Widget build(BuildContext context) {
@@ -160,9 +181,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             ),
+            TitleChildCard(
+              title: 'JsonViewer',
+              child: JsonViewer(jsonData: jsonDecode(jsonString)),
+            ),
           ],
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: toggleLayout,
         child: Icon(isLtr ? Icons.toggle_on : Icons.toggle_off),
