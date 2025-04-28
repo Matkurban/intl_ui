@@ -21,3 +21,7 @@
 ## 0.0.6
 
 * 添加了JsonViewer 组件，可视化json组件。
+
+## 0.0.7
+
+* 修复了IntlAppBar组件的Leading为null时根路由页面也出现返回案件的问题

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:example/custom/title_child_card.dart';
+import 'package:example/pages/add_test.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_ui/intl_ui.dart';
 
@@ -69,8 +70,23 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: IntlAppBar(
         isLtr: isLtr,
-        leading: IntlBackButton(isLtr: isLtr),
+        // leading: Row(children: [IntlBackButton(isLtr: isLtr)]),
         title: Text('Intl UI Demo'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return AddTest(isLtr: isLtr);
+                  },
+                ),
+              );
+            },
+            icon: Icon(Icons.add),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(10),

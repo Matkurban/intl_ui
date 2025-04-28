@@ -19,7 +19,7 @@ class IntlAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// The widgets displayed on the right side of the AppBar, typically action buttons.
   /// 应用栏右侧显示的控件，通常是操作按钮。
-  final List<Widget>? actions;
+  final List<Widget> actions;
 
   /// A flexible area below the AppBar, often used for parallax effects or similar layouts.
   /// 应用栏下方的灵活区域，通常用于实现视差效果或类似布局。
@@ -127,6 +127,9 @@ class IntlAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   final double actionWidgetWidth = 48.0;
 
+  final IconData ltrLeadingIcon = Icons.arrow_back;
+  final IconData rtlLeadingIcon = Icons.arrow_forward;
+
   const IntlAppBar({
     super.key,
     this.leading,
@@ -163,7 +166,10 @@ class IntlAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> actionsList = actions ?? [];
+    final List<Widget> actionsList = actions;
+    final ModalRoute<dynamic>? parentRoute = ModalRoute.of(context);
+    final bool useCloseButton =
+        parentRoute is PageRoute<dynamic> && parentRoute.fullscreenDialog;
 
     // 计算 actions 的总宽度
     double getActionsWidth() {
@@ -174,19 +180,49 @@ class IntlAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     Widget? leadingWidget;
-    List<Widget>? actionsWidget;
+    List<Widget> actionsWidget;
     double? computedLeadingWidth;
 
     if (isLtr) {
       leadingWidget = leading;
-      actionsWidget = actionsList.isNotEmpty ? actionsList : null;
+      if (leadingWidget == null && automaticallyImplyLeading) {
+        if (parentRoute?.impliesAppBarDismissal ?? false) {
+          leadingWidget =
+              useCloseButton ? const CloseButton() : const BackButton();
+        }
+      }
+      actionsWidget = actionsList.isNotEmpty ? actionsList : [];
       computedLeadingWidth = leadingWidth;
     } else {
-      leadingWidget =
-          actionsList.isNotEmpty
-              ? Row(mainAxisSize: MainAxisSize.min, children: actionsList)
-              : null;
-      actionsWidget = leading != null ? <Widget>[leading!] : null;
+      if (actionsList.isNotEmpty) {
+        leadingWidget = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: actionsList,
+        );
+      } else {
+        leadingWidget = Row();
+        computedLeadingWidth = 0;
+      }
+      actionsWidget = leading != null ? <Widget>[leading!] : [];
+
+      if (leading != null) {
+        actionsWidget = <Widget>[leading!];
+      } else {
+        if (actionsWidget.isEmpty && automaticallyImplyLeading) {
+          if (parentRoute?.impliesAppBarDismissal ?? false) {
+            actionsWidget = [
+              IconButton(
+                onPressed: () => Navigator.maybePop(context),
+                icon: Icon(
+                  isLtr ? ltrLeadingIcon : rtlLeadingIcon,
+                  color: Theme.of(context).appBarTheme.iconTheme?.color,
+                ),
+              ),
+            ];
+          }
+        }
+      }
+
       // 当方向为 RTL 时，使用计算后的 actions 宽度
       computedLeadingWidth =
           actionsList.isNotEmpty ? getActionsWidth() : leadingWidth;
