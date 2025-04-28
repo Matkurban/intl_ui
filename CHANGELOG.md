@@ -25,3 +25,7 @@
 ## 0.0.7
 
 * 修复了IntlAppBar组件的Leading为null时根路由页面也出现返回案件的问题
+
+## 0.0.8
+
+* 回复了IntlBackButton的icon至BackButton默认的icon
