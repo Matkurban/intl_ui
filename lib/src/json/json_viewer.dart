@@ -24,17 +24,13 @@ class JsonViewer extends StatelessWidget {
   /// 普通value颜色
   final Color valueColor;
 
-  /// 对象左侧边框颜色
-  final Color objectBorderColor;
-
-  /// 数组左侧边框颜色
-  final Color arrayBorderColor;
-
   /// 行文字大小
   final double fontSize;
 
   /// 左侧缩进量
   final double indentWidth;
+
+  final double elevation;
 
   /// 行内自定义构建
   final Widget Function(
@@ -64,21 +60,20 @@ class JsonViewer extends StatelessWidget {
     this.numberColor = const Color(0xff4bc015),
     this.boolColor = Colors.purple,
     this.valueColor = Colors.black,
-    this.objectBorderColor = const Color(0xffff9d00),
-    this.arrayBorderColor = const Color(0xff3e57e1),
     this.fontSize = 14,
     this.indentWidth = 10,
     this.rowBuilder,
     this.onLongPress,
     this.onTap,
     this.onDoubleTap,
+    this.elevation = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: margin,
-      elevation: 0,
+      elevation: elevation,
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
@@ -104,6 +99,7 @@ class JsonViewer extends StatelessWidget {
     required String path,
     required BuildContext context,
     required int level,
+    bool isLast = false,
   }) {
     if (value is Map) {
       return _buildJsonObject(
@@ -127,6 +123,8 @@ class JsonViewer extends StatelessWidget {
         value: value,
         path: path,
         context: context,
+        level: level,
+        isLast: isLast,
       );
     }
   }
@@ -148,6 +146,7 @@ class JsonViewer extends StatelessWidget {
           value: '{',
           type: JsonType.objectStart,
           path: path,
+          level: level,
         ),
       );
     } else {
@@ -158,10 +157,12 @@ class JsonViewer extends StatelessWidget {
           value: '{',
           type: JsonType.objectStart,
           path: path,
+          level: level,
         ),
       );
     }
 
+    int index = 0;
     jsonObject.forEach((key, value) {
       children.add(
         _buildJsonView(
@@ -170,37 +171,32 @@ class JsonViewer extends StatelessWidget {
           path: '$path/$key',
           context: context,
           level: level + 1,
+          isLast: index == jsonObject.length - 1,
         ),
       );
+      index++;
     });
 
     children.add(
       _buildJsonRow(
         context: context,
         keyName: '',
-        value: '},',
+        value: '}',
         type: JsonType.objectEnd,
         path: path,
+        level: level,
       ),
     );
 
-    return Container(
-      margin: EdgeInsets.only(left: indentWidth),
-      decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: objectBorderColor, width: 0.5)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children:
-            children
-                .map(
-                  (w) => Padding(
-                    padding: EdgeInsets.symmetric(vertical: rowSpacing / 2),
-                    child: w,
-                  ),
-                )
-                .toList(),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children:
+          children.map((child) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: rowSpacing / 2),
+              child: child,
+            );
+          }).toList(),
     );
   }
 
@@ -213,24 +209,39 @@ class JsonViewer extends StatelessWidget {
   }) {
     List<Widget> children = [];
 
-    children.add(
-      _buildJsonRow(
-        context: context,
-        keyName: keyName,
-        value: '[${jsonArray.length}]',
-        type: JsonType.arrayStart,
-        path: path,
-      ),
-    );
+    if (keyName.isNotEmpty) {
+      children.add(
+        _buildJsonRow(
+          context: context,
+          keyName: keyName,
+          value: '[',
+          type: JsonType.arrayStart,
+          path: path,
+          level: level,
+        ),
+      );
+    } else {
+      children.add(
+        _buildJsonRow(
+          context: context,
+          keyName: '',
+          value: '[',
+          type: JsonType.arrayStart,
+          path: path,
+          level: level,
+        ),
+      );
+    }
 
     for (int i = 0; i < jsonArray.length; i++) {
       children.add(
         _buildJsonView(
-          keyName: '[$i]',
+          keyName: '',
           value: jsonArray[i],
           path: '$path/$i',
           context: context,
           level: level + 1,
+          isLast: i == jsonArray.length - 1,
         ),
       );
     }
@@ -239,29 +250,22 @@ class JsonViewer extends StatelessWidget {
       _buildJsonRow(
         context: context,
         keyName: '',
-        value: '],',
+        value: ']',
         type: JsonType.arrayEnd,
         path: path,
+        level: level,
       ),
     );
 
-    return Container(
-      margin: EdgeInsets.only(left: indentWidth),
-      decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: arrayBorderColor, width: 0.5)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children:
-            children
-                .map(
-                  (w) => Padding(
-                    padding: EdgeInsets.symmetric(vertical: rowSpacing / 2),
-                    child: w,
-                  ),
-                )
-                .toList(),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children:
+          children.map((child) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: rowSpacing / 2),
+              child: child,
+            );
+          }).toList(),
     );
   }
 
@@ -270,6 +274,8 @@ class JsonViewer extends StatelessWidget {
     required dynamic value,
     required String path,
     required BuildContext context,
+    required int level,
+    required bool isLast,
   }) {
     return _buildJsonRow(
       context: context,
@@ -277,6 +283,8 @@ class JsonViewer extends StatelessWidget {
       value: value,
       type: JsonType.primitive,
       path: path,
+      level: level,
+      isLast: isLast,
     );
   }
 
@@ -286,6 +294,8 @@ class JsonViewer extends StatelessWidget {
     required dynamic value,
     required JsonType type,
     required String path,
+    required int level,
+    bool isLast = false,
   }) {
     final TextStyle keyStyle = TextStyle(color: keyColor, fontSize: fontSize);
 
@@ -294,15 +304,15 @@ class JsonViewer extends StatelessWidget {
 
     if (type == JsonType.primitive) {
       if (value is String) {
-        displayValue = '"$value"';
+        displayValue = '"$value"${isLast ? '' : ','}';
         vColor = stringColor;
       } else if (value is num) {
+        displayValue = '$value${isLast ? '' : ','}';
         vColor = numberColor;
       } else if (value is bool) {
+        displayValue = '$value${isLast ? '' : ','}';
         vColor = boolColor;
       }
-    } else if (type == JsonType.arrayStart) {
-      displayValue = '[${value.toString()}]';
     }
 
     final TextStyle valueStyle = TextStyle(color: vColor, fontSize: fontSize);
@@ -331,9 +341,12 @@ class JsonViewer extends StatelessWidget {
       Expanded(child: Text(displayValue, style: valueStyle, softWrap: true)),
     );
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: children,
+    return Padding(
+      padding: EdgeInsets.only(left: indentWidth * level),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      ),
     );
   }
 }
