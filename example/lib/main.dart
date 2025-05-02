@@ -1,9 +1,10 @@
 import 'dart:convert';
 
-import 'package:example/custom/title_child_card.dart';
-import 'package:example/pages/add_test.dart';
-import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:intl_ui/intl_ui.dart';
+import 'package:flutter/material.dart';
+import 'package:example/pages/add_test.dart';
+import 'package:example/custom/title_child_card.dart';
 
 void main() {
   runApp(MyApp());
@@ -201,13 +202,37 @@ class _MyHomePageState extends State<MyHomePage> {
               title: 'JsonViewer',
               child: JsonViewer(jsonData: jsonDecode(jsonString)),
             ),
+            TitleChildCard(
+              title: 'DioLoggerScreen',
+              child: ElevatedButton(
+                onPressed: () {
+                  Dio dio = Dio();
+                  dio.interceptors.add(DioLoggerInterceptors());
+                  dio
+                      .get('https://xxx.xxxx.com/api/v1/test')
+                      .then((response) {
+                        print(response.data);
+                      })
+                      .catchError((error) {
+                        print(error);
+                      });
+                },
+                child: Text('发送Dio请求'),
+              ),
+            ),
           ],
         ),
       ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: toggleLayout,
-        child: Icon(isLtr ? Icons.toggle_on : Icons.toggle_off),
+      bottomNavigationBar: Row(
+        spacing: 20,
+        children: [
+          DioLoggerNavButton(),
+          FloatingActionButton(
+            onPressed: toggleLayout,
+            child: Icon(isLtr ? Icons.toggle_on : Icons.toggle_off),
+          ),
+        ],
       ),
     );
   }

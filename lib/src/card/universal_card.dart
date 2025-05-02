@@ -29,7 +29,6 @@ class UniversalCard extends StatelessWidget {
     this.gradient,
     this.splashColor,
     this.highlightColor,
-    this.isEnabled = true,
     this.backgroundColor,
   });
 
@@ -121,92 +120,56 @@ class UniversalCard extends StatelessWidget {
   /// 卡片按下时的高亮颜色
   final Color? highlightColor;
 
-  /// Whether the card is enabled for interaction
-  /// 卡片是否启用交互
-  final bool isEnabled;
-
   /// The background color of the card container
   /// 卡片容器的背景颜色
   final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
-    final CardThemeData cardTheme = CardTheme.of(context);
-    // 使用辅助方法获取 BorderRadius
-    // Use helper method to get BorderRadius
-    BorderRadius? effectiveBorderRadius = _getBorderRadius(borderRadius);
+    final CardThemeData cardTheme = Theme.of(context).cardTheme;
 
-    // 如果没有自定义 borderRadius，尝试从 shape 中获取
-    // If no custom borderRadius, try to get it from shape
-    if (effectiveBorderRadius == null && shape is RoundedRectangleBorder) {
-      effectiveBorderRadius = _getBorderRadius(
-        (shape as RoundedRectangleBorder).borderRadius,
-      );
+    BorderRadius? borderRadius;
+    if (shape == null) {
+      var shape = cardTheme.shape;
+      if (shape != null) {
+        var rectangleBorder = shape as RoundedRectangleBorder;
+        borderRadius = rectangleBorder.borderRadius as BorderRadius?;
+      }
     }
 
-    Widget cardContent = Container(
-      width: width,
-      height: height,
-      padding: padding,
-      alignment: alignment,
-      decoration: BoxDecoration(
-        border: border,
-        borderRadius: effectiveBorderRadius,
-        gradient: gradient,
-        color: backgroundColor,
+    Widget cardContent = InkWell(
+      onTap: onPress,
+      onLongPress: onLongPress,
+      onDoubleTap: onDoubleTap,
+      splashColor: splashColor,
+      highlightColor: highlightColor,
+      customBorder: shape ?? cardTheme.shape,
+      child: Container(
+        width: width,
+        height: height,
+        padding: padding,
+        alignment: alignment,
+        decoration: BoxDecoration(
+          border: border,
+          gradient: gradient,
+          borderRadius: borderRadius,
+          color: backgroundColor,
+        ),
+        child: child,
       ),
-      child: child,
     );
 
-    if (isEnabled &&
-        (onPress != null || onLongPress != null || onDoubleTap != null)) {
-      cardContent = InkWell(
-        onTap: onPress,
-        onLongPress: onLongPress,
-        onDoubleTap: onDoubleTap,
-        splashColor: splashColor,
-        highlightColor: highlightColor,
-        borderRadius: effectiveBorderRadius,
-        child: cardContent,
-      );
-    }
-
     return Card(
+      margin: margin,
+      clipBehavior: clipBehavior,
       color: color ?? cardTheme.color,
-      shadowColor: shadowColor ?? cardTheme.shadowColor,
       surfaceTintColor: surfaceTintColor,
-      elevation: elevation ?? cardTheme.elevation ?? 1.0,
       shape: shape ?? cardTheme.shape,
       borderOnForeground: borderOnForeground,
-      clipBehavior: clipBehavior,
-      margin: margin,
+      shadowColor: shadowColor ?? cardTheme.shadowColor,
+      elevation: elevation ?? cardTheme.elevation ?? 1.0,
       semanticContainer: semanticContainer,
       child: cardContent,
     );
-  }
-
-  /// Helper method to safely convert BorderRadiusGeometry to BorderRadius
-  /// 辅助方法，安全地将 BorderRadiusGeometry 转换为 BorderRadius
-  BorderRadius? _getBorderRadius(BorderRadiusGeometry? geometry) {
-    if (geometry == null) return null;
-
-    if (geometry is BorderRadius) {
-      return geometry;
-    }
-
-    // Handle different types of BorderRadius
-    // 处理不同类型的 BorderRadius
-    if (geometry is BorderRadiusDirectional) {
-      return BorderRadius.only(
-        topLeft: geometry.topStart,
-        topRight: geometry.topEnd,
-        bottomLeft: geometry.bottomStart,
-        bottomRight: geometry.bottomEnd,
-      );
-    }
-
-    // Default fallback
-    // 默认返回
-    return BorderRadius.zero;
   }
 }
