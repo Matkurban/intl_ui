@@ -33,19 +33,19 @@ class ToggleButtonGroup extends StatefulWidget {
 
   /// Padding for each button
   /// 每个按钮的内边距
-  final EdgeInsetsGeometry buttonPadding;
+  final EdgeInsetsGeometry padding;
 
   /// Border radius for each button
   /// 每个按钮的圆角半径
-  final BorderRadius buttonBorderRadius;
+  final BorderRadius borderRadius;
 
   /// Height of the toggle button group container
-  /// 切换按钮组容器的高度
-  final double height;
+  /// 切换按钮组容器的高度,横向时为高度，竖向时为宽度。
+  final double size;
 
   /// Margin for each button
   /// 每个按钮的外边距
-  final EdgeInsetsGeometry buttonMargin;
+  final EdgeInsetsGeometry itemMargin;
 
   /// Duration for the scroll animation
   /// 滚动动画的持续时间
@@ -56,6 +56,13 @@ class ToggleButtonGroup extends StatefulWidget {
   final Curve animationCurve;
 
   final AlignmentGeometry labelAlignment;
+
+  final Widget Function(BuildContext context, int index, bool isSelected)?
+  itemBuilder;
+
+  final Axis axis;
+
+  final double inkWellRadius;
 
   @override
   State createState() => _ToggleButtonGroupState();
@@ -69,19 +76,19 @@ class ToggleButtonGroup extends StatefulWidget {
     this.unselectedColor = Colors.black12,
     this.selectedTextStyle = const TextStyle(color: Colors.white),
     this.unselectedTextStyle = const TextStyle(color: Colors.black),
-    this.buttonPadding = const EdgeInsets.symmetric(
-      vertical: 8.0,
-      horizontal: 16.0,
-    ),
-    this.buttonBorderRadius = const BorderRadius.all(Radius.circular(8.0)),
-    this.height = 50.0,
-    this.buttonMargin = const EdgeInsets.symmetric(
+    this.padding = const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+    this.borderRadius = const BorderRadius.all(Radius.circular(8.0)),
+    this.size = 50.0,
+    this.itemMargin = const EdgeInsets.symmetric(
       horizontal: 4.0,
       vertical: 4.0,
     ),
     this.animationDuration = const Duration(milliseconds: 300),
     this.animationCurve = Curves.easeInOut,
     this.labelAlignment = Alignment.center,
+    this.itemBuilder,
+    this.axis = Axis.horizontal,
+    this.inkWellRadius = 10,
   });
 }
 
@@ -135,47 +142,56 @@ class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: widget.height,
-      child: ListView.builder(
-        controller: _scrollController,
-        scrollDirection: Axis.horizontal,
-        itemCount: widget.labels.length,
-        itemBuilder: (context, index) {
-          final isSelected = _currentIndex == index;
-          return Container(
-            key: _itemKeys[index],
-            margin: widget.buttonMargin,
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  _currentIndex = index;
-                });
-                widget.onSelected(index);
-                _scrollToSelectedItem(index);
-              },
-              child: Container(
-                padding: widget.buttonPadding,
-                alignment: widget.labelAlignment,
-                decoration: BoxDecoration(
-                  color:
-                      isSelected
-                          ? widget.selectedColor
-                          : widget.unselectedColor,
-                  borderRadius: widget.buttonBorderRadius,
-                ),
-                child: Text(
-                  widget.labels[index],
-                  style:
-                      isSelected
-                          ? widget.selectedTextStyle
-                          : widget.unselectedTextStyle,
-                ),
-              ),
-            ),
-          );
-        },
-      ),
+    return widget.axis == Axis.horizontal
+        ? SizedBox(height: widget.size, child: _buildListView())
+        : SizedBox(width: widget.size, child: _buildListView());
+  }
+
+  Widget _buildListView() {
+    return ListView.builder(
+      controller: _scrollController,
+      scrollDirection: widget.axis,
+      itemCount: widget.labels.length,
+      itemBuilder: (context, index) {
+        final isSelected = _currentIndex == index;
+
+        return Container(
+          key: _itemKeys[index],
+          margin: widget.itemMargin,
+          child: InkWell(
+            radius: widget.inkWellRadius,
+            borderRadius: widget.borderRadius,
+            onTap: () {
+              setState(() {
+                _currentIndex = index;
+              });
+              widget.onSelected(index);
+              _scrollToSelectedItem(index);
+            },
+            child:
+                widget.itemBuilder != null
+                    ? widget.itemBuilder!(context, index, isSelected)
+                    : Container(
+                      padding: widget.padding,
+                      alignment: widget.labelAlignment,
+                      decoration: BoxDecoration(
+                        color:
+                            isSelected
+                                ? widget.selectedColor
+                                : widget.unselectedColor,
+                        borderRadius: widget.borderRadius,
+                      ),
+                      child: Text(
+                        widget.labels[index],
+                        style:
+                            isSelected
+                                ? widget.selectedTextStyle
+                                : widget.unselectedTextStyle,
+                      ),
+                    ),
+          ),
+        );
+      },
     );
   }
 }

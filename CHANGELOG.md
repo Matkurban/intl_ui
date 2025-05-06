@@ -1,6 +1,6 @@
 ## 0.0.1
 
-* 发布IntlAppBar，IntlBackButton等等组件。
+* 发布`IntlAppBar`，`IntlBackButton`等等组件。
 
 ## 0.0.2
 
@@ -8,7 +8,7 @@
 
 ## 0.0.3
 
-* 重构IntlAppBar组件，更加完善通用化。
+* 重构`IntlAppBar`组件，更加完善通用化。
 
 ## 0.0.4
 
@@ -20,7 +20,7 @@
 
 ## 0.0.6
 
-* 添加了JsonViewer 组件，可视化json组件。
+* 添加了`JsonViewer` 组件，可视化json组件。
 
 ## 0.0.7
 
@@ -28,12 +28,16 @@
 
 ## 0.0.8
 
-* 恢复了IntlBackButton的icon至BackButton默认的icon，并且添加了可更换icon的属性。
+* 恢复了`IntlBackButton`的icon至`BackButton`默认的icon，并且添加了可更换icon的属性。
 
 ## 0.0.9
 
-* 修复了JsonViewer组件显示集合时的缩进异常，移除了显示集合长度和索引的特性。
+* 修复了`JsonViewer`组件显示集合时的缩进异常，移除了显示集合长度和索引的特性。
 
 ## 0.1.0
 
-* 添加了DioLoggerScreen组件，支持dio日志查看。
+* 添加了`DioLoggerScreen`组件，支持dio日志查看。
+
+## 0.1.1
+
+* 移除冗余封装的组件，给`ToggleButtonGroup`组件添加`itemBuilder`属性。
