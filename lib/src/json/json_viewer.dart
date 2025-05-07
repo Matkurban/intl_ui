@@ -136,6 +136,27 @@ class JsonViewer extends StatelessWidget {
     required BuildContext context,
     required int level,
   }) {
+    /// 空对象，直接一行显示 {}
+    if (jsonObject.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.only(left: indentWidth * level),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (keyName.isNotEmpty)
+              Text(
+                '"$keyName" : ',
+                style: TextStyle(color: keyColor, fontSize: fontSize),
+              ),
+            Text(
+              "{ }",
+              style: TextStyle(color: valueColor, fontSize: fontSize),
+            ),
+          ],
+        ),
+      );
+    }
+
     List<Widget> children = [];
 
     if (keyName.isNotEmpty) {
@@ -313,6 +334,14 @@ class JsonViewer extends StatelessWidget {
         displayValue = '$value${isLast ? '' : ','}';
         vColor = boolColor;
       }
+    } else if (type == JsonType.objectStart) {
+      displayValue = '{';
+    } else if (type == JsonType.objectEnd) {
+      displayValue = '}';
+    } else if (type == JsonType.arrayStart) {
+      displayValue = '[';
+    } else if (type == JsonType.arrayEnd) {
+      displayValue = ']';
     }
 
     final TextStyle valueStyle = TextStyle(color: vColor, fontSize: fontSize);

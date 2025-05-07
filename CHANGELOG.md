@@ -41,3 +41,7 @@
 ## 0.1.1
 
 * 移除冗余封装的组件，给`ToggleButtonGroup`组件添加`itemBuilder`属性。
+
+## 0.1.2
+
+* 添加了`IntlText`组件。

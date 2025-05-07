@@ -1,6 +1,6 @@
 name: intl_ui
 description: "A Flutter UI package that provides internationalized widgets and components for building multilingual applications."
-version: 0.1.1
+version: 0.1.2
 homepage: https://github.com/Matkurban/intl_ui
 
 environment:
@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   dio: ^5.8.0+1
+  intl: any
 
 dev_dependencies:
   flutter_test:

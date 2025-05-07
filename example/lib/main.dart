@@ -32,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
     "age": 30,
     "city": "New York",
     "isMarried": false,
-    "children": [
+    "children":[
       {
         "name": "Anna",
         "age": 10
@@ -41,6 +41,10 @@ class _MyHomePageState extends State<MyHomePage> {
         "name": "Billy",
         "age": 5
       }
+    ],
+    "nullObject":{},
+    "children1":[
+      1,2,3,4,5,6,7,8,9,10
     ]
   }
   ''';
