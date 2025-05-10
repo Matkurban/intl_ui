@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:example/custom/title_child_card.dart';
+import 'package:example/pages/splitter_demo.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_ui/intl_ui.dart';
 
@@ -126,6 +127,15 @@ class _MyHomePageState extends State<MyHomePage> {
           TitleChildCard(
             title: 'DioLoggerNavButton',
             child: DioLoggerNavButton(),
+          ),
+          ListTile(
+            title: Text("Splitter"),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SplitterDemo()),
+              );
+            },
           ),
         ],
       ),
