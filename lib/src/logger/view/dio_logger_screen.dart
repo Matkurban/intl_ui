@@ -26,18 +26,24 @@ class _DioLoggerScreenState extends State<DioLoggerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Network Log')),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(10),
-        itemBuilder: (BuildContext context, int index) {
-          var item = widget.logic.logList.reversed.toList()[index];
-          return LoggerListCard(
-            item: item,
-            onTap: () => widget.logic.toDetails(context, item),
-          );
-        },
-        itemCount: widget.logic.logList.length,
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Scaffold(
+        appBar: AppBar(title: Text('Network Log')),
+        body: Directionality(
+          textDirection: TextDirection.ltr,
+          child: ListView.builder(
+            padding: const EdgeInsets.all(10),
+            itemBuilder: (BuildContext context, int index) {
+              var item = widget.logic.logList.reversed.toList()[index];
+              return LoggerListCard(
+                item: item,
+                onTap: () => widget.logic.toDetails(context, item),
+              );
+            },
+            itemCount: widget.logic.logList.length,
+          ),
+        ),
       ),
     );
   }
