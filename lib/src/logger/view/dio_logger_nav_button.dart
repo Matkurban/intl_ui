@@ -12,18 +12,22 @@ class DioLoggerNavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return DioLoggerScreen(logic: DioLoggerScreenLogic.instance);
-            },
-          ),
-        );
-      },
-      icon: child,
+    return Material(
+      elevation: 8,
+      shape: const CircleBorder(),
+      child: IconButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return DioLoggerScreen(logic: DioLoggerScreenLogic.instance);
+              },
+            ),
+          );
+        },
+        icon: child,
+      ),
     );
   }
 }

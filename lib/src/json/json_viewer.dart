@@ -140,19 +140,21 @@ class JsonViewer extends StatelessWidget {
     if (jsonObject.isEmpty) {
       return Padding(
         padding: EdgeInsets.only(left: indentWidth * level),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (keyName.isNotEmpty)
-              Text(
-                '"$keyName" : ',
-                style: TextStyle(color: keyColor, fontSize: fontSize),
+        child: RichText(
+          text: TextSpan(
+            style: TextStyle(color: Colors.black, fontSize: fontSize),
+            children: [
+              if (keyName.isNotEmpty)
+                TextSpan(
+                  text: '"$keyName" : ',
+                  style: TextStyle(color: keyColor, fontSize: fontSize),
+                ),
+              TextSpan(
+                text: "{ }",
+                style: TextStyle(color: valueColor, fontSize: fontSize),
               ),
-            Text(
-              "{ }",
-              style: TextStyle(color: valueColor, fontSize: fontSize),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }
@@ -358,23 +360,20 @@ class JsonViewer extends StatelessWidget {
       );
     }
 
-    List<Widget> children = [];
-
-    if (type != JsonType.objectEnd &&
-        type != JsonType.arrayEnd &&
-        keyName.isNotEmpty) {
-      children.add(Text('"$keyName" : ', style: keyStyle));
-    }
-
-    children.add(
-      Expanded(child: Text(displayValue, style: valueStyle, softWrap: true)),
-    );
-
     return Padding(
       padding: EdgeInsets.only(left: indentWidth * level),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children,
+      child: RichText(
+        text: TextSpan(
+          style: TextStyle(fontSize: fontSize), // 默认样式
+          children: [
+            if (type != JsonType.objectEnd &&
+                type != JsonType.arrayEnd &&
+                keyName.isNotEmpty)
+              TextSpan(text: '"$keyName" : ', style: keyStyle),
+            TextSpan(text: displayValue, style: valueStyle),
+          ],
+        ),
+        softWrap: true,
       ),
     );
   }
